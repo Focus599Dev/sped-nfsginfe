@@ -247,6 +247,192 @@ class Tools extends ToolsBase {
         return (String) $auxResp->return[0];
 
     }
+
+    public function ConsultarNfse($NumeroNfse , \stdClass $prestador){
+
+        $servico = 'ConsultarNfseV3';
+
+        $this->servico(
+            $servico,
+            $this->config->municipio,
+            $this->tpAmb
+        );
+
+        $namespaces = array(
+            'xmlns:p="http://www.ginfes.com.br/servico_consultar_nfse_envio_v03.xsd"',
+            'xmlns:tipos="http://www.ginfes.com.br/tipos_v03.xsd"',
+            'xmlns="http://www.w3.org/2000/09/xmldsig#"'
+        );
+
+        $xml = '<p:ConsultarNfseEnvio ';
+
+            $xml .= implode(' ', $namespaces) . '>';
+
+            $xml .= '<p:Prestador>';
+
+                $xml .= '<tipos:Cnpj>' . $prestador->cnpj . '</tipos:Cnpj>';
+                
+                $xml .= '<tipos:InscricaoMunicipal>' . $prestador->inscricaoMunicipal . '</tipos:InscricaoMunicipal>';
+                
+            $xml .= '</p:Prestador>';
+
+            $xml .= '<p:NumeroNfse>' . $NumeroNfse . '</p:NumeroNfse>';
+
+        $xml .= '</p:ConsultarNfseEnvio>';
+
+        $request = Signer::sign(
+            $this->certificate,
+            $xml,
+            'ConsultarNfseEnvio',
+            'Id',
+            $this->algorithm,
+            $this->canonical
+        );
+
+        $this->lastRequest = $request;
+
+
+        $this->isValid($this->versao, $request, 'servico_consultar_nfse_envio');
+
+        $parameters = ['ConsultarNfseEnvio' => $request];
+
+        $request = $this->MakeEnvelope($servico, $request);
+
+        $this->lastResponse = $this->sendRequest($request, $parameters);
+
+        $this->lastResponse = $this->removeStuffs($this->lastResponse);
+
+        $auxResp = simplexml_load_string($this->lastResponse);
+
+        return (String) $auxResp->return[0];
+
+    }
+
+    public function CancelaNfse($pedCan){
+
+        $servico = 'CancelarNfse';
+
+        $this->servico(
+            $servico,
+            $this->config->municipio,
+            $this->tpAmb
+        );
+
+        $namespaces = array(
+            'xmlns:p="http://www.ginfes.com.br/servico_cancelar_nfse_envio"',
+            'xmlns:tipos="http://www.ginfes.com.br/tipos"',
+            'xmlns="http://www.w3.org/2000/09/xmldsig#"'
+        );
+
+        // XML v3 
+        // $xml = '<p:CancelarNfseEnvio ';
+
+        //     $xml .= implode(' ', $namespaces) . '>';
+
+        //     $xml .= '<Pedido xmlns="">';
+
+        //         $xml .= '<tipos:InfPedidoCancelamento Id="' . $pedCan->Numero . '">';
+
+        //             $xml .= '<tipos:IdentificacaoNfse>';
+
+        //                 $xml .= '<tipos:Numero>' . $pedCan->Numero . '</tipos:Numero>';
+                        
+        //                 $xml .= '<tipos:Cnpj>' . $pedCan->cnpj . '</tipos:Cnpj>';
+
+        //                 $xml .= '<tipos:InscricaoMunicipal>' . $pedCan->InscricaoMunicipal . '</tipos:InscricaoMunicipal>';
+
+        //                 $xml .= '<tipos:CodigoMunicipio>' . $pedCan->CodigoMunicipio . '</tipos:CodigoMunicipio>';
+
+        //             $xml .= '</tipos:IdentificacaoNfse>';
+
+        //             $xml .= '<tipos:CodigoCancelamento>' . $pedCan->CodigoCancelamento . '</tipos:CodigoCancelamento>';
+
+        //         $xml .= '</tipos:InfPedidoCancelamento>';
+
+        //     $xml .= '</Pedido>';
+
+        // $xml .= '</p:CancelarNfseEnvio>';
+        
+        // XML v2
+        $this->version('2.0.2');
+
+        $xml = '<p:CancelarNfseEnvio ';
+
+            $xml .= implode(' ', $namespaces) . '>';
+
+           $xml .= '<p:Prestador>';
+
+                $xml .= '<tipos:Cnpj>' . $pedCan->cnpj . '</tipos:Cnpj>';
+                
+                $xml .= '<tipos:InscricaoMunicipal>' . $pedCan->InscricaoMunicipal . '</tipos:InscricaoMunicipal>';
+                
+            $xml .= '</p:Prestador>';
+
+            $xml .= '<p:NumeroNfse>' . $pedCan->Numero . '</p:NumeroNfse>';
+
+        $xml .= '</p:CancelarNfseEnvio>';
+
+        $request = Signer::sign(
+            $this->certificate,
+            $xml,
+            'CancelarNfseEnvio',
+            'Id',
+            $this->algorithm,
+            $this->canonical
+        );
+
+        $this->lastRequest = $request;
+
+        $this->isValid($this->versao, $request, 'servico_cancelar_nfse_envio');
+
+        $parameters = ['CancelarNfseEnvio' => $request];
+
+        $request = $this->MakeEnvelope($servico, $request);
+
+        $this->lastResponse = $this->sendRequest($request, $parameters);
+
+        $this->lastResponse = $this->removeStuffs($this->lastResponse);
+
+        $auxResp = simplexml_load_string($this->lastResponse);
+
+        return (String) $auxResp->return[0];
+
+    }
+
+    public function generateUrlPDFNfse($code_municipio, $CodigoVerificacao, $nnf, $cnpj_emit ){
+
+        $municipio = array(
+            '3543402' => array(
+                'cname' => 'ribeiraopreto',
+                'param' => 'nfs_ribeirao_preto',
+            ),
+            '3516200' => array(
+                'cname' => 'franca',
+                'param' => 'nfs_franca',
+            )
+        );
+
+        $urls = array(
+            '1' => '.ginfe.com.br',
+            '2' => '.ginfesh.com.br'
+        );
+
+        $url = '';
+
+        if (isset( $municipio[$code_municipio] )){
+
+            if (!isset($urls[$this->tpAmb]))
+                throw new \Exception("Ambiente não localizado");
+
+            $url = 'http://' . $municipio[$code_municipio]['cname'] . $urls[$this->tpAmb] . '/report/consultarNota?__report=' . $municipio[$code_municipio]['param'] . '&cdVerificacao=' . $CodigoVerificacao . '&numNota=' . $nnf . '&cnpjPrestador=' . $cnpj_emit; 
+
+            return $url;
+        }
+
+        throw new \Exception("Municipio não localizado");
+        
+
+    }
 }                                                                                                                            
 
 ?>
