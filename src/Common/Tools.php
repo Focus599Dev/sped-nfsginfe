@@ -158,6 +158,7 @@ class Tools {
      */
     protected $availableVersions = [
         '3.0.1' => 'GINFEV301',
+        '2.0.2' => 'GINFEV201',
     ];
     
     /**
@@ -478,6 +479,11 @@ class Tools {
         if (preg_match('/ns4:/', $xml)){
 
            $xml = preg_replace('/ns4:/', '', $xml);
+        }
+
+        if (preg_match('/ns5:/', $xml)){
+
+           $xml = preg_replace('/ns5:/', '', $xml);
         }
 
         return $xml;
