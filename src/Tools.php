@@ -413,7 +413,7 @@ class Tools extends ToolsBase {
         );
 
         $urls = array(
-            '1' => '.ginfe.com.br',
+            '1' => '.ginfes.com.br',
             '2' => '.ginfesh.com.br'
         );
 
