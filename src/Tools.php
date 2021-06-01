@@ -408,7 +408,7 @@ class Tools extends ToolsBase {
             ),
             '3516200' => array(
                 'cname' => 'franca',
-                'param' => 'nfs_franca',
+                'param' => 'nfs_ver4',
             )
         );
 
@@ -424,7 +424,7 @@ class Tools extends ToolsBase {
             if (!isset($urls[$this->tpAmb]))
                 throw new \Exception("Ambiente não localizado");
 
-            $url = 'http://' . $municipio[$code_municipio]['cname'] . $urls[$this->tpAmb] . '/report/consultarNota?__report=' . $municipio[$code_municipio]['param'] . '&cdVerificacao=' . $CodigoVerificacao . '&numNota=' . $nnf . '&cnpjPrestador=' . $cnpj_emit; 
+            $url = 'http://visualizar' . $urls[$this->tpAmb] . '/report/consultarNota?__report=' . $municipio[$code_municipio]['param'] . '&cdVerificacao=' . $CodigoVerificacao . '&numNota=' . $nnf . '&cnpjPrestador=' . $cnpj_emit; 
 
             return $url;
         }
