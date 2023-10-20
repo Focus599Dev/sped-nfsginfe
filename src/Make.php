@@ -95,7 +95,7 @@ class Make{
 
     protected $soapnamespaces = [
         'xmlns'  => "http://www.w3.org/2000/09/xmldsig#",
-        'xmlns:p'       => "http://www.ginfes.com.br/servico_enviar_lote_rps_envio_v03.xsd",
+        'xmlns:g'       => "http://www.ginfes.com.br/servico_enviar_lote_rps_envio_v03.xsd",
         'xmlns:tipos' => "http://www.ginfes.com.br/tipos_v03.xsd",
     ];
 
@@ -114,7 +114,7 @@ class Make{
 
     public function monta(){
 
-        $EnviarLoteRpsEnvio = $this->dom->createElement('p:EnviarLoteRpsEnvio');
+        $EnviarLoteRpsEnvio = $this->dom->createElement('g:EnviarLoteRpsEnvio');
 
         foreach ($this->soapnamespaces as $key => $namespace) {
             
@@ -156,7 +156,7 @@ class Make{
 
         $std = $this->equilizeParameters($std, $possible);
         
-        $loteRps = $this->dom->createElement("p:LoteRps");
+        $loteRps = $this->dom->createElement("g:LoteRps");
 
         $this->dom->addChild(
             $loteRps,
